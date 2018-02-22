@@ -49,8 +49,32 @@ public class ReplicantTest {
             singletonMap("statements", singletonList(singletonMap("statement",
                     "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3125137509'}) yield value return value")));
 
+    @Test
+    public void testReplicantExistingAddress() throws Exception {
+        HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY3);
+        int count = response.get("results").get(0).get("data").size();
+        assertEquals(1, count);
+        JsonNode actual = response.get("results").get(0).get("data").get(0).get("row").get(0);
+        assertEquals(actual.get("a1").get("address").get("geohash").getTextValue(), "dp3wq");
+    }
 
+    private static final Map QUERY3 =
+            singletonMap("statements", singletonList(singletonMap("statement",
+                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 North Harbor Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value")));
 
+    @Test
+    public void testReplicantTypoAddress() throws Exception {
+        HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY4);
+        int count = response.get("results").get(0).get("data").size();
+        assertEquals(1, count);
+        JsonNode actual = response.get("results").get(0).get("data").get(0).get("row").get(0);
+        assertEquals(actual.get("a1").get("address").get("geohash").getTextValue(), "dp3wq");
+    }
+
+    private static final Map QUERY4 =
+            singletonMap("statements", singletonList(singletonMap("statement",
+                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value")));
+    
     private static final String MODEL_STATEMENT =
             "CREATE (a1:Account { id: 'a1' })" +
             "CREATE (a2:Account { id: 'a2' })" +
@@ -62,10 +86,10 @@ public class ReplicantTest {
             "CREATE (p2:Phone { number: '3128675309' })" +
             "CREATE (p3:Phone { number: '3125551234' })" +
 
-            "CREATE (add1:Address { line1:'175 North Harbor Dr.', city:'Chicago', state:'IL', zip:'60605', lat: 41.886069, lon:-87.61567, geohash:'dp3wq0z'})" +
-            "CREATE (add2:Address { line1:'520 South State St.', city:'Chicago', state:'IL', zip:'60605', lat:41.875418, lon:-87.627636 , geohash:'dp3wjzp'})" +
-            "CREATE (add3:Address { line1:'111 E 5th Avenue', city:'San Mateo', state:'CA', zip:'94401', lat:37.562841, lon:-122.322973, geohash:'9q9j8qp'})" +
-            "CREATE (add4:Address { line1:'3900 Yorktowne Blvd', city:'Port Orange', state:'FL', zip:'32129', lat:29.113762, lon:-81.027617, geohash:'djnms5v'})" +
+            "CREATE (add1:Address { line1:'175 North Harbor Dr.', city:'Chicago', state:'IL', zip:'60605', lat: 41.886069, lon:-87.61567, geohash:'dp3wq'})" +
+            "CREATE (add2:Address { line1:'520 South State St.', city:'Chicago', state:'IL', zip:'60605', lat:41.875418, lon:-87.627636 , geohash:'dp3wj'})" +
+            "CREATE (add3:Address { line1:'111 E 5th Avenue', city:'San Mateo', state:'CA', zip:'94401', lat:37.562841, lon:-122.322973, geohash:'9q9j8'})" +
+            "CREATE (add4:Address { line1:'3900 Yorktowne Blvd', city:'Port Orange', state:'FL', zip:'32129', lat:29.113762, lon:-81.027617, geohash:'djnms'})" +
 
             "CREATE (z1:Zip { code: '60605' })" +
             "CREATE (z2:Zip { code: '94401' })" +

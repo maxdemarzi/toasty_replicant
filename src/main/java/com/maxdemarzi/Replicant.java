@@ -92,8 +92,8 @@ public class Replicant {
             Double latitude = data.getDouble("latitude");
             Double longitude = data.getDouble("longitude");
 
-            // A GeoHash of precision 7 is ±0.076 km
-            GeoHash hash = GeoHash.withCharacterPrecision(latitude, longitude, 7);
+            // A GeoHash of precision 5 is ±2.4 km
+            GeoHash hash = GeoHash.withCharacterPrecision(latitude, longitude, 5);
 
             // Get the addresses at this geohash location
             Iterator<Node> iter = db.findNodes(Labels.Address, "geohash", hash.toBase32());

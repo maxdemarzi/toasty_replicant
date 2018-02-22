@@ -34,25 +34,25 @@ public class AddressSimplifier implements Simplifier {
         put("^RTE|^RT", "ROUTE");
         put(" RT | RTE ", " ROUTE ");
         put("^1ST|^1|1ST$", "FIRST");
-        put(" 1 | 1ST ", " FIRST ");
+        put(" 1| 1ST ", " FIRST ");
         put("^2ND|^2|2ND$", "SECOND");
-        put(" 2 | 2ND ", " SECOND ");
+        put(" 2| 2ND ", " SECOND ");
         put("^3RD|^3|3RD$", "THIRD");
-        put("^ 3 | 3RD ", " THIRD ");
+        put("^ 3| 3RD ", " THIRD ");
         put("^4TH|^4|4TH$", "FOURTH");
-        put(" 4 | 4TH ", " FOURTH ");
+        put(" 4| 4TH ", " FOURTH ");
         put("^5TH|^5|5TH$", "FIFTH");
-        put(" 5 | 5TH ", " FIFTH ");
+        put(" 5| 5TH ", " FIFTH ");
         put("^6TH|^6|6TH$", "SIXTH");
-        put("^ 6 | 6TH ", " SIXTH ");
+        put("^ 6| 6TH ", " SIXTH ");
         put("^7TH|^7|7TH$", "SEVENTH");
-        put("^ 7 | 7TH ", " SEVENTH ");
+        put("^ 7| 7TH ", " SEVENTH ");
         put("^8TH|^8|8TH$", "EIGHTH");
-        put("^ 8 | 8TH ", " EIGHTH ");
+        put("^ 8| 8TH ", " EIGHTH ");
         put("^9TH|^9|9TH$", "NINTH");
-        put("^ 9 | 9TH ", " NINTH ");
+        put("^ 9| 9TH ", " NINTH ");
         put("^10TH|^10|10TH$", "TENTH");
-        put("^ 10 | 10TH ", " TENTH ");
+        put("^ 10| 10TH ", " TENTH ");
     }};
 
     @Override
