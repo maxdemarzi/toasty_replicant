@@ -39,6 +39,7 @@ public class SchemaTest {
 
     private static final ArrayList expected = new ArrayList<String>() {{
         add("(:Account {id}) constraint created");
+        add("(:Address {geohash}) index created");
         add("(:Email {address}) constraint created");
         add("(:Phone {number}) constraint created");
         add("(:Zip {code}) constraint created");

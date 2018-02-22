@@ -38,6 +38,12 @@ public class Schema {
                     .create();
             results.add(new StringResult("(:Account {id}) constraint created"));
         }
+        if (!schema.getIndexes(Labels.Address).iterator().hasNext()) {
+            schema.indexFor(Labels.Address)
+                    .on("geohash")
+                    .create();
+            results.add(new StringResult("(:Address {geohash}) index created"));
+        }
         if (!schema.getIndexes(Labels.Email).iterator().hasNext()) {
             schema.constraintFor(Labels.Email)
                     .assertPropertyIsUnique("address")

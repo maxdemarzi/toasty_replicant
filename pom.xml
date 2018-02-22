@@ -11,6 +11,8 @@
 
     <properties>
         <neo4j.version>3.3.3</neo4j.version>
+        <unirest.version>1.4.9</unirest.version>
+        <geohash.version>1.3.0</geohash.version>
         <junit.version>4.12</junit.version>
         <simmetrics.version>4.1.1</simmetrics.version>
     </properties>
@@ -29,10 +31,24 @@
         </dependency>
 
         <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>${unirest.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.hsr</groupId>
+            <artifactId>geohash</artifactId>
+            <version>${geohash.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.mpkorstanje</groupId>
             <artifactId>simmetrics-core</artifactId>
             <version>${simmetrics.version}</version>
         </dependency>
+
+
 
         <!-- Test Dependencies -->
         <dependency>
