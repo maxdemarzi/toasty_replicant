@@ -1,7 +1,6 @@
 package com.maxdemarzi;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Rule;
 import org.junit.Test;
 import org.neo4j.harness.junit.Neo4jRule;
@@ -15,8 +14,6 @@ import static junit.framework.TestCase.assertEquals;
 
 public class ReplicantTest {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
-
     @Rule
     public final Neo4jRule neo4j = new Neo4jRule()
             .withFixture(MODEL_STATEMENT)
@@ -28,12 +25,13 @@ public class ReplicantTest {
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         JsonNode actual = response.get("results").get(0).get("data").get(0).get("row").get(0);
-        assertEquals(actual.get("a1").get("email").get("address").getTextValue(), "max@neo4j.com");
+        assertEquals(actual.get(0).get("address").getTextValue(), "max@neo4j.com");
+        assertEquals(actual.get(1).get("id").getTextValue(), "a1");
     }
 
     private static final Map QUERY1 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3102762251'}) yield value return value")));
+                    "CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3102762251'}) yield nodes return nodes")));
 
     @Test
     public void testReplicantExistingPhone() throws Exception {
@@ -41,12 +39,13 @@ public class ReplicantTest {
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         JsonNode actual = response.get("results").get(0).get("data").get(0).get("row").get(0);
-        assertEquals(actual.get("a1").get("phone").get("number").getTextValue(), "3125137509");
+        assertEquals(actual.get(0).get("number").getTextValue(), "3125137509");
+        assertEquals(actual.get(1).get("id").getTextValue(), "a1");
     }
 
     private static final Map QUERY2 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3125137509'}) yield value return value")));
+                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3125137509'}) yield nodes return nodes")));
 
     @Test
     public void testReplicantExistingAddress() throws Exception {
@@ -54,12 +53,13 @@ public class ReplicantTest {
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         JsonNode actual = response.get("results").get(0).get("data").get(0).get("row").get(0);
-        assertEquals(actual.get("a1").get("address").get("geohash").getTextValue(), "dp3wq");
+        assertEquals(actual.get(0).get("geohash").getTextValue(), "dp3wq");
+        assertEquals(actual.get(1).get("id").getTextValue(), "a1");
     }
 
     private static final Map QUERY3 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 North Harbor Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value")));
+                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 North Harbor Dr. Chicago IL 60605'], phone:'1235550000'}) yield nodes return nodes")));
 
     @Test
     public void testReplicantTypoAddress() throws Exception {
@@ -67,12 +67,13 @@ public class ReplicantTest {
         int count = response.get("results").get(0).get("data").size();
         assertEquals(1, count);
         JsonNode actual = response.get("results").get(0).get("data").get(0).get("row").get(0);
-        assertEquals(actual.get("a1").get("address").get("geohash").getTextValue(), "dp3wq");
+        assertEquals(actual.get(0).get("geohash").getTextValue(), "dp3wq");
+        assertEquals(actual.get(1).get("id").getTextValue(), "a1");
     }
 
     private static final Map QUERY4 =
             singletonMap("statements", singletonList(singletonMap("statement",
-                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value")));
+                    "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield nodes return nodes")));
 
     private static final String MODEL_STATEMENT =
             "CREATE (a1:Account { id: 'a1' })" +

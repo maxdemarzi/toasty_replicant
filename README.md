@@ -56,20 +56,20 @@ Create some test data:
         
 Try it, with the same email:
 
-    CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3102762251'}) yield value return value;
+    CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3102762251'}) yield nodes return nodes;
     
 Same phone:
     
-    CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3125137509'}) yield value return value;
+    CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3125137509'}) yield nodes return nodes;
 
 Same address:
 
-    CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 North Harbor Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value;
+    CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 North Harbor Dr. Chicago IL 60605'], phone:'1235550000'}) yield nodes return nodes;
 
 Address typos:
 
-    CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value;            
+    CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield nodes return nodes;            
     
 Two matching items:
 
-    CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value;    
+    CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield nodes return nodes;    

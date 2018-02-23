@@ -5,7 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.maxdemarzi.results.MapResult;
+import com.maxdemarzi.results.NodeListResult;
 import com.maxdemarzi.schema.Labels;
 import com.maxdemarzi.schema.RelationshipTypes;
 import org.json.JSONObject;
@@ -41,16 +41,15 @@ public class Replicant {
 
     @Procedure(name = "com.maxdemarzi.replicant", mode = Mode.READ)
     @Description("CALL com.maxdemarzi.replicant(facts)")
-    public Stream<MapResult> findReplicant(@Name("facts") Map<String, Object> facts) throws IOException, UnirestException {
+    public Stream<NodeListResult> findReplicant(@Name("facts") Map<String, Object> facts) throws IOException, UnirestException {
 
-        Map<String, Map<String, Object>> results = new HashMap<>();
+        Map<Node, List<Node>> results = new HashMap<>();
         Node email = db.findNode(Labels.Email, "address", facts.get("email"));
 
         if (email != null) {
             email.getRelationships(Direction.INCOMING, RelationshipTypes.HAS_EMAIL)
                     .forEach(relationship -> {
-                            String accountId = (String)relationship.getStartNode().getProperty("id");
-                            results.put(accountId, new HashMap<String, Object>(){{ put("email", email); }});
+                            results.put(relationship.getStartNode(), new ArrayList<Node>(){{ add( email); }});
                     });
         }
 
@@ -59,15 +58,14 @@ public class Replicant {
         if (phone != null) {
             phone.getRelationships(Direction.INCOMING, RelationshipTypes.HAS_PHONE)
                     .forEach(relationship -> {
-                        Map<String, Object> reasons;
-                        String accountId = (String)relationship.getStartNode().getProperty("id");
-                        if (results.containsKey(accountId)) {
-                            reasons = results.get(accountId);
+                        List<Node> reasons;
+                        if (results.containsKey(relationship.getStartNode())) {
+                            reasons = results.get(relationship.getStartNode());
                         } else {
-                            reasons = new HashMap<>();
+                            reasons =  new ArrayList<>();
                         }
-                        reasons.put("phone", phone);
-                        results.put(accountId, reasons);
+                        reasons.add( phone);
+                        results.put(relationship.getStartNode(), reasons);
                     });
         }
 
@@ -123,21 +121,23 @@ public class Replicant {
                 if (score > 0.90) {
                     entry.getValue().getRelationships(Direction.INCOMING, RelationshipTypes.HAS_ADDRESS)
                     .forEach(relationship -> {
-                        Map<String, Object> reasons;
-                        String accountId = (String)relationship.getStartNode().getProperty("id");
-                        if (results.containsKey(accountId)) {
-                            reasons = results.get(accountId);
+                        List<Node> reasons;
+                        if (results.containsKey(relationship.getStartNode())) {
+                            reasons = results.get(relationship.getStartNode());
                         } else {
-                            reasons = new HashMap<>();
+                            reasons = new ArrayList<>();
                         }
-                        reasons.put("address", entry.getValue());
-                        results.put(accountId, reasons);
+                        reasons.add( entry.getValue());
+                        results.put(relationship.getStartNode(), reasons);
                     });
                 }
             }
         }
+        return results.entrySet().stream().map(entry -> {
+            entry.getValue().add(entry.getKey());
+            return new NodeListResult(entry.getValue());
+        });
 
-        return Stream.of(new MapResult(results));
     }
 
 
