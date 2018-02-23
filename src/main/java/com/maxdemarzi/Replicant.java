@@ -43,14 +43,15 @@ public class Replicant {
     @Description("CALL com.maxdemarzi.replicant(facts)")
     public Stream<MapResult> findReplicant(@Name("facts") Map<String, Object> facts) throws IOException, UnirestException {
 
-        Map<String, Map<String, Object>> accounts = new HashMap<>();
+        Map<String, Map<String, Object>> results = new HashMap<>();
         Node email = db.findNode(Labels.Email, "address", facts.get("email"));
 
         if (email != null) {
             email.getRelationships(Direction.INCOMING, RelationshipTypes.HAS_EMAIL)
-                    .forEach(relationship -> accounts.put((String)relationship.getStartNode().getProperty("id"), new HashMap<String, Object>(){{
-                        put("email", email);
-                    }}));
+                    .forEach(relationship -> {
+                            String accountId = (String)relationship.getStartNode().getProperty("id");
+                            results.put(accountId, new HashMap<String, Object>(){{ put("email", email); }});
+                    });
         }
 
         Node phone = db.findNode(Labels.Phone, "number", facts.get("phone"));
@@ -60,13 +61,13 @@ public class Replicant {
                     .forEach(relationship -> {
                         Map<String, Object> reasons;
                         String accountId = (String)relationship.getStartNode().getProperty("id");
-                        if (accounts.containsKey(accountId)) {
-                            reasons = accounts.get(accountId);
+                        if (results.containsKey(accountId)) {
+                            reasons = results.get(accountId);
                         } else {
                             reasons = new HashMap<>();
                         }
                         reasons.put("phone", phone);
-                        accounts.put(accountId, reasons);
+                        results.put(accountId, reasons);
                     });
         }
 
@@ -119,24 +120,24 @@ public class Replicant {
             String simplifiedAddress = addressSimplifier.simplify(address);
             for (Map.Entry<String, Node> entry : possibleAddresses.entrySet()) {
                 Float score = metric.compare(simplifiedAddress, addressSimplifier.simplify(entry.getKey()));
-                if (score > 0.80) {
+                if (score > 0.90) {
                     entry.getValue().getRelationships(Direction.INCOMING, RelationshipTypes.HAS_ADDRESS)
                     .forEach(relationship -> {
                         Map<String, Object> reasons;
                         String accountId = (String)relationship.getStartNode().getProperty("id");
-                        if (accounts.containsKey(accountId)) {
-                            reasons = accounts.get(accountId);
+                        if (results.containsKey(accountId)) {
+                            reasons = results.get(accountId);
                         } else {
                             reasons = new HashMap<>();
                         }
                         reasons.put("address", entry.getValue());
-                        accounts.put(accountId, reasons);
+                        results.put(accountId, reasons);
                     });
                 }
             }
         }
 
-        return Stream.of(new MapResult(accounts));
+        return Stream.of(new MapResult(results));
     }
 
 

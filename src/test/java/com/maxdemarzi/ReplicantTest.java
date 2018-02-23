@@ -35,7 +35,6 @@ public class ReplicantTest {
             singletonMap("statements", singletonList(singletonMap("statement",
                     "CALL com.maxdemarzi.replicant({email:'max@neo4j.com', addresses:['9641 Sunset Blvd Beverly Hills CA 90210'], phone:'3102762251'}) yield value return value")));
 
-
     @Test
     public void testReplicantExistingPhone() throws Exception {
         HTTP.Response response = HTTP.POST(neo4j.httpURI().resolve("/db/data/transaction/commit").toString(), QUERY2);
@@ -74,7 +73,7 @@ public class ReplicantTest {
     private static final Map QUERY4 =
             singletonMap("statements", singletonList(singletonMap("statement",
                     "CALL com.maxdemarzi.replicant({email:'some@email.com', addresses:['175 Norht Hrabro Dr. Chicago IL 60605'], phone:'1235550000'}) yield value return value")));
-    
+
     private static final String MODEL_STATEMENT =
             "CREATE (a1:Account { id: 'a1' })" +
             "CREATE (a2:Account { id: 'a2' })" +
@@ -91,10 +90,6 @@ public class ReplicantTest {
             "CREATE (add3:Address { line1:'111 E 5th Avenue', city:'San Mateo', state:'CA', zip:'94401', lat:37.562841, lon:-122.322973, geohash:'9q9j8'})" +
             "CREATE (add4:Address { line1:'3900 Yorktowne Blvd', city:'Port Orange', state:'FL', zip:'32129', lat:29.113762, lon:-81.027617, geohash:'djnms'})" +
 
-            "CREATE (z1:Zip { code: '60605' })" +
-            "CREATE (z2:Zip { code: '94401' })" +
-            "CREATE (z3:Zip { code: '32129' })" +
-
             "CREATE (a1)-[:HAS_EMAIL]->(e1)" +
             "CREATE (a2)-[:HAS_EMAIL]->(e2)" +
             "CREATE (a3)-[:HAS_EMAIL]->(e3)" +
@@ -102,11 +97,6 @@ public class ReplicantTest {
             "CREATE (a1)-[:HAS_PHONE]->(p1)" +
             "CREATE (a2)-[:HAS_PHONE]->(p2)" +
             "CREATE (a3)-[:HAS_PHONE]->(p3)" +
-
-            "CREATE (add1)-[:HAS_ZIP]->(z1)" +
-            "CREATE (add2)-[:HAS_ZIP]->(z1)" +
-            "CREATE (add3)-[:HAS_ZIP]->(z2)" +
-            "CREATE (add4)-[:HAS_ZIP]->(z3)" +
 
             "CREATE (a1)-[:HAS_ADDRESS { billing:true, shipping:true, current:true }]->(add1)" +
             "CREATE (a2)-[:HAS_ADDRESS { billing:true, shipping:true, current:true }]->(add2)" +
